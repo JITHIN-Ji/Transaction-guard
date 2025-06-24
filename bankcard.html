@@ -1,0 +1,43 @@
+<!-- detection/templates/detection/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraud Detection</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        form { max-width: 300px; margin: 0 auto; padding: 1em; }
+        label, input, button { display: block; margin-bottom: 10px; width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>Fraud Detection System</h1>
+    <form id="transactionForm" method="post" action=".">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Check Fraud</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById("transactionForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            fetch(".", {
+                method: "POST",
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("result").innerText = `Prediction: ${data.result}`;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("result").innerText = "An error occurred.";
+            });
+        });
+    </script>
+</body>
+</html>
